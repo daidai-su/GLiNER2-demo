@@ -22,6 +22,8 @@ The research direction is robust schema wording for zero-shot intent classificat
 3. Select `Runtime > Change runtime type > T4 GPU` when available.
 4. Run the notebook from top to bottom.
 
+If the notebook is opened directly from GitHub and the project files are not present in the Colab runtime, it tries to clone `https://github.com/daidai-su/GLiNER2-demo.git`. For a private repository, Colab may be able to open the notebook UI but the runtime may still be unable to clone the full repository without GitHub credentials; in that case, upload or clone the full repository into the runtime first.
+
 The notebook installs dependencies from `requirements-colab.txt`. It uses local inference with `fastino/gliner2-base-v1`; it does not call the Pioneer / GLiNER2 cloud API and does not require paid API keys.
 
 ## Notebook Configuration
