@@ -9,6 +9,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 ## Files
 
 - `notebooks/01_gliner2_smoke_test_colab.ipynb`: Colab notebook for installation, environment checks, quick inference, dataset loading, smoke evaluation, and report writing.
+- `notebooks/02_gliner2_schema_wording_experiment_colab.ipynb`: Main Colab experiment for deterministic schema wording variants and paraphrase ensembles.
 - `requirements-colab.txt`: Minimal Colab dependencies.
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
@@ -26,6 +27,37 @@ If the notebook is opened directly from GitHub and the project files are not pre
 
 The notebook installs dependencies from `requirements-colab.txt`. It uses local inference with `fastino/gliner2-base-v1`; it does not call the Pioneer / GLiNER2 cloud API and does not require paid API keys.
 
+## Main Experiment
+
+After the smoke test succeeds, open `notebooks/02_gliner2_schema_wording_experiment_colab.ipynb`.
+
+The main experiment compares:
+
+- `raw_label`
+- `plain_label`
+- `query_about_label`
+- `banking_request_label`
+- `customer_intent_label`
+- `vote_ensemble`
+- `mean_confidence_ensemble`
+- `confidence_margin_fallback`
+
+The default `MODE = "small"` evaluates a stratified subset with `SMALL_PER_LABEL = 5`, or up to 385 examples for Banking77. Full mode requires `CONFIRM_FULL_RUN = True` so a long run is not started accidentally.
+
+Outputs are written under `OUTPUT_DIR`:
+
+- `predictions/{method_name}.jsonl`
+- `run_manifest.json`
+- `schema_variants.json`
+- `evaluated_example_ids.json`
+- `tables/results_summary.csv`
+- `tables/per_label_metrics.csv`
+- `tables/schema_disagreement_examples.csv`
+- `tables/improved_examples.csv`
+- `tables/degraded_examples.csv`
+- `tables/confusion_pairs.csv`
+- `figures/*.png`
+
 ## Notebook Configuration
 
 The main variables are defined in the notebook config cell:
@@ -38,6 +70,14 @@ The main variables are defined in the notebook config cell:
 
 If a GPU is unavailable, the notebook warns clearly and caps smoke evaluation to 5 examples. On a Colab GPU, smoke mode evaluates up to the configured `SMOKE_N_EXAMPLES` value.
 
+For the main experiment notebook, also review:
+
+- `MODE = "smoke" | "small" | "full"`
+- `SMALL_PER_LABEL`
+- `MARGIN_THRESHOLD`
+- `FORCE_RERUN`
+- `CONFIRM_FULL_RUN`
+
 ## Scope
 
-This phase performs no fine-tuning, no manual annotation, and no external paid API calls. Results should be treated only as a local-inference smoke test, not as final project evidence.
+The project performs no fine-tuning, no manual annotation, and no external paid API calls. The smoke notebook is only a pipeline check. The main experiment notebook is the first course-project experiment and should be interpreted together with its saved manifest, tables, and error analysis.

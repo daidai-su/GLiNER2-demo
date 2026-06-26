@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import inspect
 import json
+import time
 from dataclasses import dataclass
 from typing import Any, Iterable
+
+from .data_utils import normalize_label_text
 
 
 @dataclass
@@ -155,3 +158,80 @@ def predict_intent(
         include_confidence=True,
     )
     return parse_classification_output(raw_output)
+
+
+def _candidate_to_canonical_lookup(
+    predicted_candidate: str | None,
+    candidate_to_canonical: dict[str, str],
+) -> str | None:
+    if predicted_candidate is None:
+        return None
+    if predicted_candidate in candidate_to_canonical:
+        return candidate_to_canonical[predicted_candidate]
+
+    normalized_prediction = normalize_label_text(predicted_candidate)
+    normalized_lookup = {
+        normalize_label_text(candidate): canonical
+        for candidate, canonical in candidate_to_canonical.items()
+    }
+    return normalized_lookup.get(normalized_prediction)
+
+
+def predict_one_classification(
+    model: Any,
+    text: str,
+    candidate_labels: list[str],
+    candidate_to_canonical: dict[str, str],
+    method_name: str,
+    example_id: Any | None = None,
+    gold_label: str | None = None,
+    task_name: str = "intent",
+) -> dict[str, Any]:
+    """Run one classification call and return a robust JSONL-ready row."""
+
+    start_time = time.perf_counter()
+    raw_output: Any = None
+    predicted_candidate = None
+    predicted_canonical = None
+    confidence = None
+    parse_error = None
+
+    try:
+        raw_output = classify_text_raw(
+            model=model,
+            text=text,
+            candidate_labels=candidate_labels,
+            task_name=task_name,
+            include_confidence=True,
+        )
+        parsed = parse_classification_output(raw_output)
+        predicted_candidate = parsed.label
+        confidence = parsed.confidence
+        predicted_canonical = _candidate_to_canonical_lookup(
+            predicted_candidate,
+            candidate_to_canonical,
+        )
+        if predicted_candidate is None:
+            parse_error = "predicted candidate could not be parsed"
+        elif predicted_canonical is None:
+            parse_error = (
+                f"predicted candidate {predicted_candidate!r} could not be mapped "
+                "to a canonical label"
+            )
+    except Exception as exc:  # pragma: no cover - requires model/runtime failures.
+        parse_error = repr(exc)
+
+    latency_sec = time.perf_counter() - start_time
+    return {
+        "example_id": example_id,
+        "text": text,
+        "gold_label": gold_label,
+        "candidate_labels": list(candidate_labels),
+        "raw_output": make_json_safe(raw_output),
+        "predicted_candidate": predicted_candidate,
+        "predicted_canonical": predicted_canonical,
+        "confidence": confidence,
+        "latency_sec": latency_sec,
+        "method": method_name,
+        "parse_error": parse_error,
+    }
