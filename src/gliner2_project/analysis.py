@@ -21,6 +21,7 @@ def rows_to_frame(rows: Sequence[dict[str, Any]]) -> pd.DataFrame:
 
 def method_metrics_frame(
     predictions_by_method: dict[str, list[dict[str, Any]]],
+    effective_latency_components: dict[str, Sequence[str]] | None = None,
 ) -> pd.DataFrame:
     """Build method-level metrics from prediction rows."""
 
@@ -62,6 +63,7 @@ def method_metrics_frame(
                 "accuracy": accuracy,
                 "macro_f1": macro_f1,
                 "weighted_f1": weighted_f1,
+                "effective_latency_sec": avg_latency,
                 "average_latency_sec": avg_latency,
                 "total_runtime_sec": total_runtime,
                 "parse_failure_rate": float(parse_failures / total) if total else 0.0,
@@ -69,7 +71,32 @@ def method_metrics_frame(
             }
         )
 
-    return pd.DataFrame(rows)
+    frame = pd.DataFrame(rows)
+    if effective_latency_components and not frame.empty:
+        average_latency_by_method = dict(
+            zip(frame["method"], frame["average_latency_sec"])
+        )
+        for method, components in effective_latency_components.items():
+            component_latencies = [
+                average_latency_by_method.get(component)
+                for component in components
+            ]
+            if all(pd.notna(value) for value in component_latencies):
+                frame.loc[
+                    frame["method"] == method,
+                    "effective_latency_sec",
+                ] = float(sum(component_latencies))
+
+    column_order = [
+        "method",
+        "num_examples",
+        "accuracy",
+        "macro_f1",
+        "weighted_f1",
+        "effective_latency_sec",
+        "parse_failure_rate",
+    ]
+    return frame[[column for column in column_order if column in frame.columns]]
 
 
 def per_label_metrics_frame(
@@ -179,6 +206,79 @@ def compare_method_examples(
     degraded["baseline_method"] = baseline_method
     degraded["comparison_method"] = comparison_method
     return improved, degraded
+
+
+def paired_outcome_frame(
+    predictions_by_method: dict[str, list[dict[str, Any]]],
+    baseline_method: str,
+    comparison_method: str,
+) -> pd.DataFrame:
+    """Return per-example paired correctness outcomes for two methods."""
+
+    baseline = rows_to_frame(predictions_by_method.get(baseline_method, []))
+    comparison = rows_to_frame(predictions_by_method.get(comparison_method, []))
+    if baseline.empty or comparison.empty:
+        return pd.DataFrame()
+
+    merged = baseline[
+        ["example_id", "text", "gold_label", "predicted_canonical"]
+    ].merge(
+        comparison[["example_id", "predicted_canonical"]],
+        on="example_id",
+        suffixes=("_baseline", "_comparison"),
+    )
+    merged["baseline_method"] = baseline_method
+    merged["comparison_method"] = comparison_method
+    merged["baseline_correct"] = (
+        merged["gold_label"] == merged["predicted_canonical_baseline"]
+    )
+    merged["comparison_correct"] = (
+        merged["gold_label"] == merged["predicted_canonical_comparison"]
+    )
+
+    def outcome(row: pd.Series) -> str:
+        if (not row["baseline_correct"]) and row["comparison_correct"]:
+            return "baseline_wrong_comparison_correct"
+        if row["baseline_correct"] and (not row["comparison_correct"]):
+            return "baseline_correct_comparison_wrong"
+        if row["baseline_correct"] and row["comparison_correct"]:
+            return "both_correct"
+        return "both_wrong"
+
+    merged["paired_outcome"] = merged.apply(outcome, axis=1)
+    return merged
+
+
+def paired_summary_frame(
+    predictions_by_method: dict[str, list[dict[str, Any]]],
+    baseline_method: str,
+    comparison_methods: Sequence[str],
+) -> pd.DataFrame:
+    """Return paired correctness counts and net gains for comparisons."""
+
+    rows: list[dict[str, Any]] = []
+    for comparison_method in comparison_methods:
+        paired = paired_outcome_frame(
+            predictions_by_method,
+            baseline_method,
+            comparison_method,
+        )
+        counts = paired["paired_outcome"].value_counts().to_dict()
+        improved = int(counts.get("baseline_wrong_comparison_correct", 0))
+        degraded = int(counts.get("baseline_correct_comparison_wrong", 0))
+        rows.append(
+            {
+                "baseline_method": baseline_method,
+                "comparison_method": comparison_method,
+                "plain_wrong_comparison_correct": improved,
+                "plain_correct_comparison_wrong": degraded,
+                "both_correct": int(counts.get("both_correct", 0)),
+                "both_wrong": int(counts.get("both_wrong", 0)),
+                "net_gain": improved - degraded,
+                "num_examples": int(len(paired)),
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def confusion_pairs_frame(

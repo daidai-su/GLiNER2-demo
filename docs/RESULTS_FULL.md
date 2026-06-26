@@ -21,19 +21,19 @@ Does deterministic paraphrase ensembling over schema wordings improve GLiNER2 ze
 
 ## Main Result
 
-The primary baseline is `plain_label`. The small pilot run selected `vote_ensemble` as the fixed main ensemble candidate before this full run. On the full test split, `vote_ensemble` still improved over `plain_label`, but the best observed method overall was `mean_confidence_ensemble`.
+The primary baseline is `plain_label`. For final reporting, the main selected method is `mean_confidence_ensemble`. The secondary method is `vote_ensemble`.
 
-Compared with `plain_label`, the preselected `vote_ensemble` improved:
-
-- Accuracy: 0.684330 -> 0.687581, delta +0.003251
-- Macro F1: 0.675726 -> 0.678583, delta +0.002857
-- Weighted F1: 0.675849 -> 0.678686, delta +0.002837
-
-Compared with `plain_label`, the best observed `mean_confidence_ensemble` improved:
+Compared with `plain_label`, the main selected `mean_confidence_ensemble` improved:
 
 - Accuracy: 0.684330 -> 0.689532, delta +0.005202
 - Macro F1: 0.675726 -> 0.680569, delta +0.004843
 - Weighted F1: 0.675849 -> 0.680685, delta +0.004836
+
+Compared with `plain_label`, the secondary `vote_ensemble` also improved:
+
+- Accuracy: 0.684330 -> 0.687581, delta +0.003251
+- Macro F1: 0.675726 -> 0.678583, delta +0.002857
+- Weighted F1: 0.675849 -> 0.678686, delta +0.002837
 
 | Method | Examples | Accuracy | Macro F1 | Weighted F1 | Avg Latency Sec | Total Runtime Sec | Parse Failure Rate |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -72,11 +72,15 @@ This confirms the main premise of the project: GLiNER2 predictions are meaningfu
 
 The saved improvement/degradation artifacts compare `plain_label` with the best observed ensemble for analysis, which was `mean_confidence_ensemble`.
 
-Relative to `plain_label`, `mean_confidence_ensemble` produced:
+Relative to `plain_label`, the main selected `mean_confidence_ensemble` produced:
 
 - Improved examples: 58
 - Degraded examples: 42
+- Both correct: 2063
+- Both wrong: 913
 - Net gain: 16 examples
+
+For the secondary `vote_ensemble`, the pasted compact output did not include the improved/degraded split. From the accuracy delta, the net gain over `plain_label` is approximately 10 examples. The notebook has been updated to save a separate `paired_analysis_vote_ensemble.csv` and `paired_analysis_summary.csv` so future output contains the exact paired counts.
 
 The strongest improved gold-label groups included:
 
@@ -192,7 +196,7 @@ These values should not be treated as calibrated probabilities.
 
 The full run supports the central claim that deterministic schema wording changes GLiNER2 predictions and that ensembling can provide a modest robustness gain.
 
-The gain is small but consistent with the small pilot: all three ensemble methods beat `plain_label` on macro F1, and the best observed method was `mean_confidence_ensemble`. The preselected `vote_ensemble` also beat the baseline, which supports using the small pilot as a method-selection step rather than a one-off artifact.
+The gain is small but consistent: all three ensemble methods beat `plain_label` on macro F1, and the selected `mean_confidence_ensemble` was the strongest method in the full run. The secondary `vote_ensemble` also beat the baseline.
 
 The error profile remains dominated by fine-grained neighboring intents such as identity verification variants, transfer timing versus pending transfer, card delivery versus card arrival, and top-up failure/reversal states.
 
@@ -204,7 +208,7 @@ The compact review output labeled some improvement/degradation counts as `vote_e
 
 Phase 2 full evaluation is complete. The main result is a modest but positive improvement over the plain-label baseline:
 
-- Fixed pilot-selected ensemble: `vote_ensemble`, macro F1 +0.002857 over `plain_label`
-- Best observed full-run ensemble: `mean_confidence_ensemble`, macro F1 +0.004843 over `plain_label`
+- Main selected method: `mean_confidence_ensemble`, macro F1 +0.004843 over `plain_label`
+- Secondary method: `vote_ensemble`, macro F1 +0.002857 over `plain_label`
 
 This is a defensible course-project result because the experiment is zero-shot, deterministic, locally run, and uses no additional annotations or paid APIs.

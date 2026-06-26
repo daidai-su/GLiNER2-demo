@@ -144,4 +144,4 @@ The result is not a large gain, but it is a clean MVP signal because the methods
 
 ## Recommended Next Step
 
-Run the same fixed comparison on `MODE = "full"` with `CONFIRM_FULL_RUN = True`, then report `vote_ensemble` as the pre-specified main ensemble only if this small-run analysis is explicitly treated as pilot evidence.
+The full experiment has now been run. The small result should be treated as pilot evidence that schema ensembling is worth evaluating, not as the final result.

@@ -16,6 +16,8 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `SMOKE_TEST_REPORT.md`: Initial run report template. The notebook also writes an updated report after execution.
 - `docs/RESULTS_SMALL.md`: Recorded Phase 2 small-run result summary.
 - `docs/RESULTS_FULL.md`: Recorded Phase 2 full-test result summary.
+- `docs/FINAL_REPORT_DRAFT.md`: Draft text for the final course report.
+- `docs/PRESENTATION_OUTLINE.md`: Five-slide, three-minute presentation outline.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
 
 ## How to Run in Colab
