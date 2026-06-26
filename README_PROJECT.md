@@ -15,6 +15,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
 - `SMOKE_TEST_REPORT.md`: Initial run report template. The notebook also writes an updated report after execution.
 - `docs/RESULTS_SMALL.md`: Recorded Phase 2 small-run result summary.
+- `docs/RESULTS_FULL.md`: Recorded Phase 2 full-test result summary.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
 
 ## How to Run in Colab
@@ -46,6 +47,8 @@ The main experiment compares:
 The default `MODE = "small"` evaluates a stratified subset with `SMALL_PER_LABEL = 5`, or up to 385 examples for Banking77. Full mode requires `CONFIRM_FULL_RUN = True` so a long run is not started accidentally.
 
 The current recorded small-run result is summarized in `docs/RESULTS_SMALL.md`. In that run, `vote_ensemble` was the best observed method, improving macro F1 over `plain_label` from 0.678945 to 0.692128 on 385 examples.
+
+The current recorded full-test result is summarized in `docs/RESULTS_FULL.md`. In that run, the pilot-selected `vote_ensemble` improved macro F1 over `plain_label` from 0.675726 to 0.678583, while the best observed full-run method was `mean_confidence_ensemble` with macro F1 0.680569.
 
 Outputs are written under `OUTPUT_DIR`:
 
