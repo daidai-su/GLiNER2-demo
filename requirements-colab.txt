@@ -1,0 +1,9 @@
+gliner2[local]
+datasets
+pandas
+numpy
+scikit-learn
+tqdm
+matplotlib
+pytest
+nbformat
