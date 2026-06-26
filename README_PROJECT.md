@@ -14,6 +14,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
 - `SMOKE_TEST_REPORT.md`: Initial run report template. The notebook also writes an updated report after execution.
+- `docs/RESULTS_SMALL.md`: Recorded Phase 2 small-run result summary.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
 
 ## How to Run in Colab
@@ -43,6 +44,8 @@ The main experiment compares:
 - `confidence_margin_fallback`
 
 The default `MODE = "small"` evaluates a stratified subset with `SMALL_PER_LABEL = 5`, or up to 385 examples for Banking77. Full mode requires `CONFIRM_FULL_RUN = True` so a long run is not started accidentally.
+
+The current recorded small-run result is summarized in `docs/RESULTS_SMALL.md`. In that run, `vote_ensemble` was the best observed method, improving macro F1 over `plain_label` from 0.678945 to 0.692128 on 385 examples.
 
 Outputs are written under `OUTPUT_DIR`:
 
