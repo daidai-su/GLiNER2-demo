@@ -8,6 +8,9 @@ __all__ = [
     "eval_utils",
     "gliner2_wrappers",
     "plotting",
+    "candidate_pruning",
+    "retrieval",
+    "retrieval_analysis",
     "schema_variants",
 ]
 

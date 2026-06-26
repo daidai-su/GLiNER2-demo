@@ -10,6 +10,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 
 - `notebooks/01_gliner2_smoke_test_colab.ipynb`: Colab notebook for installation, environment checks, quick inference, dataset loading, smoke evaluation, and report writing.
 - `notebooks/02_gliner2_schema_wording_experiment_colab.ipynb`: Main Colab experiment for deterministic schema wording variants and paraphrase ensembles.
+- `notebooks/03_gliner2_retrieval_candidate_pruning_colab.ipynb`: Optional retrieval-aided candidate pruning extension.
 - `requirements-colab.txt`: Minimal Colab dependencies.
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
@@ -51,6 +52,20 @@ The default `MODE = "small"` evaluates a stratified subset with `SMALL_PER_LABEL
 The current recorded small-run result is summarized in `docs/RESULTS_SMALL.md`. In that run, `vote_ensemble` was the best observed method, improving macro F1 over `plain_label` from 0.678945 to 0.692128 on 385 examples.
 
 The current recorded full-test result is summarized in `docs/RESULTS_FULL.md`. In that run, the pilot-selected `vote_ensemble` improved macro F1 over `plain_label` from 0.675726 to 0.678583, while the best observed full-run method was `mean_confidence_ensemble` with macro F1 0.680569.
+
+## Optional Retrieval-aided Candidate Pruning Extension
+
+The optional retrieval extension is in `notebooks/03_gliner2_retrieval_candidate_pruning_colab.ipynb`.
+
+It builds a TF-IDF retrieval index over the Banking77 train split, retrieves similar train examples for each evaluated test example, and prunes the GLiNER2 candidate label set before inference. This is not pure zero-shot because it uses the train split as retrieval memory. It still uses no fine-tuning, no LoRA, no manual annotation, and no paid API.
+
+Suggested run order:
+
+- `MODE = "smoke"` for a quick sanity check
+- `MODE = "small"` for a 77-label stratified pilot
+- `MODE = "full"` with `CONFIRM_FULL_RUN = True` for the full test split
+
+Outputs are saved under `OUTPUT_DIR / "retrieval_pruning"` so previous schema wording results are not overwritten.
 
 Outputs are written under `OUTPUT_DIR`:
 
