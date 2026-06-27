@@ -23,6 +23,8 @@ An additional classical baseline comparison phase was scaffolded. This phase com
 
 An additional zero-shot contrastive schema phase was scaffolded. This phase uses manually/rule-designed label descriptions, predefined confusion clusters, cluster second passes, and hierarchical coarse-to-fine GLiNER inference. It does not use Banking77 train examples or train labels, does not fine-tune GLiNER2, does not use LoRA, does not call paid APIs, and does not use an external LLM to generate labels or predictions.
 
+An additional zero-shot short-anchor schema phase was scaffolded. This phase uses manually/rule-designed short natural-language anchors for canonical Banking77 labels. It does not use Banking77 train examples or train labels, external LLM calls, GLiNER2 fine-tuning, LoRA, paid APIs, or GLiNER2 cloud APIs.
+
 ## Human Verification Steps
 
 - Colab smoke-test execution by human user
@@ -37,6 +39,9 @@ An additional zero-shot contrastive schema phase was scaffolded. This phase uses
 - Zero-shot contrastive schema Colab execution by human user, if used
 - Verification that zero-shot schema results are not reported until actually run
 - Confirmation that any full-test schema iteration is reported as exploratory if schema wording was revised after seeing full-test output
+- Short-anchor schema Colab execution by human user, if used
+- Verification that short-anchor schema results are not reported until actually run
+- Confirmation that full run is not recommended unless the small run beats `query_about_label` by the predeclared threshold
 
 ## Human-Completed Fields
 

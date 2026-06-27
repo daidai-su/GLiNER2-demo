@@ -13,6 +13,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `notebooks/03_gliner2_retrieval_candidate_pruning_colab.ipynb`: Optional retrieval-aided candidate pruning extension.
 - `notebooks/05_gliner2_classical_baselines_comparison_colab.ipynb`: Classical and retrieval baseline comparison notebook.
 - `notebooks/06_gliner2_zero_shot_contrastive_schema_colab.ipynb`: Zero-shot contrastive schema and hierarchical GLiNER follow-up notebook.
+- `notebooks/07_gliner2_short_anchor_schema_colab.ipynb`: Zero-shot short-anchor schema follow-up notebook.
 - `requirements-colab.txt`: Minimal Colab dependencies.
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
@@ -21,6 +22,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `docs/RESULTS_FULL.md`: Recorded Phase 2 full-test result summary.
 - `docs/RESULTS_CLASSICAL_BASELINES.md`: Template and guidance for the classical baseline comparison phase.
 - `docs/RESULTS_ZERO_SHOT_SCHEMA.md`: Template and guidance for the zero-shot contrastive schema phase.
+- `docs/RESULTS_SHORT_ANCHOR_SCHEMA.md`: Template and guidance for the short-anchor schema phase.
 - `docs/FINAL_REPORT_DRAFT.md`: Draft text for the final course report.
 - `docs/PRESENTATION_OUTLINE.md`: Five-slide, three-minute presentation outline.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
@@ -151,6 +153,49 @@ Outputs are saved under `OUTPUT_DIR / "zero_shot_contrastive_schema"`:
 - `zero_shot_schema_run_manifest.json`
 
 If schema wording is revised after inspecting full-test output, report the result as exploratory rather than confirmatory.
+
+## Zero-shot Short-anchor Schema Follow-up
+
+The short-anchor schema notebook is `notebooks/07_gliner2_short_anchor_schema_colab.ipynb`.
+
+It tests short, natural-language anchor labels such as:
+
+- `card_arrival` -> `card not arrived`
+- `pending_top_up` -> `top-up is pending`
+- `transfer_not_received_by_recipient` -> `recipient did not receive transfer`
+
+Compared methods include:
+
+- `short_anchor`
+- `query_about_short_anchor`
+- `customer_request_short_anchor`
+- `issue_short_anchor`
+- `minimal_contrastive_anchor`
+- `query_about_minimal_contrastive_anchor`
+
+The notebook also recomputes or caches `plain_label`, `query_about_label`, and `mean_confidence_ensemble` so all methods are evaluated on the same example IDs.
+
+This notebook intentionally does not load the Banking77 train split. It uses no train examples, no train labels, no external LLM, no fine-tuning, no LoRA, no paid API, and no GLiNER2 cloud API.
+
+Suggested run order:
+
+- `MODE = "smoke"` for a quick pipeline check
+- `MODE = "small"` for the decision run
+- `MODE = "full"` only if a short-anchor method beats `query_about_label` by at least +0.02 accuracy on small, with `CONFIRM_FULL_RUN = True`
+
+Outputs are saved under `OUTPUT_DIR / "short_anchor_schema"`:
+
+- `predictions/{method_name}.jsonl`
+- `tables/short_anchor_results_summary.csv`
+- `tables/short_anchor_table.csv`
+- `tables/paired_comparisons.csv`
+- `tables/oracle_analysis.csv`
+- `tables/correct_vote_count_distribution.csv`
+- `tables/improved_examples_vs_query_about.csv`
+- `tables/degraded_examples_vs_query_about.csv`
+- `tables/confusion_pairs.csv`
+- `figures/*.png`
+- `short_anchor_run_manifest.json`
 
 The main schema wording notebook writes these files under `OUTPUT_DIR`:
 
