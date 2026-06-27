@@ -101,3 +101,18 @@ Limitations:
 Speaker note:
 
 The main takeaway is robustness and sensitivity analysis, not a large benchmark win.
+
+## Optional Backup: Classical Baselines
+
+Use only if there is time or during Q&A.
+
+Key framing:
+
+- TF-IDF kNN uses the Banking77 train split as labeled retrieval memory.
+- Logistic Regression and Linear SVM are supervised TF-IDF baselines.
+- These are not zero-shot GLiNER2 improvements.
+- They are useful reference points for how strong simple train-set-based methods are on Banking77.
+
+Speaker note:
+
+The main five-slide story should stay focused on schema wording sensitivity. The classical baseline comparison is a separate setting and should not be mixed into the main zero-shot claim.

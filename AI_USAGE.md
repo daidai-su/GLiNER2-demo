@@ -19,6 +19,8 @@ The assistant was asked to build a graduate NLP programming project around GLiNE
 
 An additional optional retrieval-aided candidate pruning phase was scaffolded. This phase uses Banking77 train examples as a TF-IDF retrieval memory to prune candidate labels at inference time. It is not pure zero-shot, but it still uses no model training, no LoRA, no GLiNER2 cloud API, no paid API, and no manual annotations.
 
+An additional classical baseline comparison phase was scaffolded. This phase compares cached GLiNER2 zero-shot outputs with TF-IDF kNN retrieval baselines and supervised TF-IDF Logistic Regression / Linear SVM baselines. The train-set-based methods are included as comparison baselines, not as zero-shot improvements to GLiNER2. The human user must run the notebook and verify any reported metrics.
+
 ## Human Verification Steps
 
 - Colab smoke-test execution by human user
@@ -27,6 +29,9 @@ An additional optional retrieval-aided candidate pruning phase was scaffolded. T
 - Manual confirmation that no GPU results are claimed unless actually run
 - Retrieval extension Colab execution by human user, if used
 - Verification that retrieval results are not reported until actually run
+- Classical baseline comparison Colab execution by human user, if used
+- Verification that classical baseline results are not reported until actually run
+- Confirmation that no external paid API or external LLM was used for the baseline comparison
 
 ## Human-Completed Fields
 

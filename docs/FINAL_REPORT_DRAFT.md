@@ -128,6 +128,20 @@ The improvement is modest, but the experiment provides a clean result for a cour
 
 Confidence analysis showed that incorrect predictions can still have high confidence. Therefore, the GLiNER2 confidence output should not be treated as a calibrated probability. However, because `mean_confidence_ensemble` was the best method, confidence appears to be useful as a ranking signal for aggregation in this setup.
 
+## Additional Baseline Comparison
+
+An additional notebook, `notebooks/05_gliner2_classical_baselines_comparison_colab.ipynb`, was added to compare GLiNER2 with TF-IDF retrieval and classical supervised baselines.
+
+This comparison should be interpreted separately from the main zero-shot schema wording experiment:
+
+- `plain_label` and `mean_confidence_ensemble` are pure zero-shot GLiNER2 methods.
+- `tfidf_knn_majority` and `tfidf_weighted_knn` use the Banking77 train split as labeled retrieval memory.
+- `tfidf_logistic_regression` and `tfidf_linear_svm` are supervised TF-IDF baselines trained on Banking77 train labels.
+
+Therefore, train-set-based methods should not be described as zero-shot improvements to GLiNER2. They are included to show how strong simple train-set-based baselines can be for closed-domain intent classification.
+
+Results from this additional comparison should be reported only after the notebook has been run and the saved result tables have been checked.
+
 ## Limitations
 
 - The performance gain is small.
@@ -135,6 +149,7 @@ Confidence analysis showed that incorrect predictions can still have high confid
 - The confidence scores are not calibrated probabilities.
 - The experiment uses one dataset and one domain.
 - The deterministic schema templates are simple.
+- Retrieval and supervised TF-IDF baselines, if reported, use train labels and are not directly comparable to pure zero-shot GLiNER2.
 - The result should not be claimed as SOTA.
 - The method may not transfer to other datasets without further evaluation.
 

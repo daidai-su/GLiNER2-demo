@@ -137,3 +137,27 @@ def plot_candidate_recall_by_label(
     plt.xlabel("Candidate recall")
     plt.title(f"Lowest {top_n} Labels By Candidate Recall")
     return _save_current(Path(output_path))
+
+
+def plot_overlap_matrix(
+    matrix: pd.DataFrame,
+    output_path: str | Path,
+    title: str,
+) -> Path:
+    """Save a method-by-method overlap matrix."""
+
+    plt.figure(figsize=(9, 8))
+    if matrix.empty:
+        values = [[0]]
+        labels = [""]
+    else:
+        values = matrix.to_numpy(dtype=float)
+        labels = list(matrix.index)
+    plt.imshow(values)
+    plt.xticks(range(len(labels)), labels, rotation=35, ha="right")
+    plt.yticks(range(len(labels)), labels)
+    plt.xlabel("Method")
+    plt.ylabel("Method")
+    plt.title(title)
+    plt.colorbar()
+    return _save_current(Path(output_path))

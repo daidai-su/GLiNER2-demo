@@ -11,12 +11,14 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `notebooks/01_gliner2_smoke_test_colab.ipynb`: Colab notebook for installation, environment checks, quick inference, dataset loading, smoke evaluation, and report writing.
 - `notebooks/02_gliner2_schema_wording_experiment_colab.ipynb`: Main Colab experiment for deterministic schema wording variants and paraphrase ensembles.
 - `notebooks/03_gliner2_retrieval_candidate_pruning_colab.ipynb`: Optional retrieval-aided candidate pruning extension.
+- `notebooks/05_gliner2_classical_baselines_comparison_colab.ipynb`: Classical and retrieval baseline comparison notebook.
 - `requirements-colab.txt`: Minimal Colab dependencies.
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
 - `SMOKE_TEST_REPORT.md`: Initial run report template. The notebook also writes an updated report after execution.
 - `docs/RESULTS_SMALL.md`: Recorded Phase 2 small-run result summary.
 - `docs/RESULTS_FULL.md`: Recorded Phase 2 full-test result summary.
+- `docs/RESULTS_CLASSICAL_BASELINES.md`: Template and guidance for the classical baseline comparison phase.
 - `docs/FINAL_REPORT_DRAFT.md`: Draft text for the final course report.
 - `docs/PRESENTATION_OUTLINE.md`: Five-slide, three-minute presentation outline.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
@@ -67,7 +69,52 @@ Suggested run order:
 
 Outputs are saved under `OUTPUT_DIR / "retrieval_pruning"` so previous schema wording results are not overwritten.
 
-Outputs are written under `OUTPUT_DIR`:
+## Classical and Retrieval Baseline Comparison
+
+The baseline comparison notebook is `notebooks/05_gliner2_classical_baselines_comparison_colab.ipynb`.
+
+It compares:
+
+- `plain_label`, if cached from the schema wording notebook
+- `mean_confidence_ensemble`, if cached from the schema wording notebook
+- `tfidf_knn_majority`
+- `tfidf_weighted_knn`
+- `tfidf_logistic_regression`
+- `tfidf_linear_svm`
+- optional cached retrieval-pruning GLiNER2 methods
+
+These methods are not all under the same setting:
+
+- `plain_label` and `mean_confidence_ensemble` are pure zero-shot GLiNER2 methods when loaded from the main schema wording experiment.
+- TF-IDF kNN methods use the Banking77 train split as labeled retrieval memory.
+- Logistic Regression and Linear SVM are supervised classical baselines trained on Banking77 train labels.
+- Retrieval-pruning GLiNER2 methods use train examples to prune candidate labels, so they are retrieval-assisted rather than pure zero-shot.
+
+Suggested run order:
+
+- `MODE = "smoke"` for a quick sanity check
+- `MODE = "small"` for a stratified 77-label pilot with `SMALL_PER_LABEL = 5`
+- `MODE = "full"` only after setting `CONFIRM_FULL_RUN = True`
+
+Outputs are saved under `OUTPUT_DIR / "classical_baselines_comparison"`:
+
+- `predictions/{method_name}.jsonl`
+- `tables/classical_results_summary.csv`
+- `tables/method_setting_table.csv`
+- `tables/paired_comparisons.csv`
+- `tables/bootstrap_accuracy_ci.csv`
+- `tables/oracle_analysis.csv`
+- `tables/error_overlap_matrix.csv`
+- `tables/correct_overlap_matrix.csv`
+- `tables/per_label_metrics.csv`
+- `tables/per_label_delta_vs_plain.csv`
+- `tables/confusion_pairs.csv`
+- `figures/*.png`
+- `classical_run_manifest.json`
+
+Do not describe the TF-IDF kNN or supervised TF-IDF results as zero-shot improvements. They are comparison baselines showing how strong simple train-set-based methods are on Banking77.
+
+The main schema wording notebook writes these files under `OUTPUT_DIR`:
 
 - `predictions/{method_name}.jsonl`
 - `run_manifest.json`
