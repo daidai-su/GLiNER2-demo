@@ -142,6 +142,17 @@ Therefore, train-set-based methods should not be described as zero-shot improvem
 
 Results from this additional comparison should be reported only after the notebook has been run and the saved result tables have been checked.
 
+In the completed full run, only the TF-IDF based baselines were evaluated in this notebook. No GLiNER2 cached predictions were loaded for this comparison run.
+
+| Method | Setting | Accuracy | Macro F1 |
+|---|---|---:|---:|
+| `tfidf_knn_majority` | retrieval-only | 0.788362 | 0.786465 |
+| `tfidf_weighted_knn` | retrieval-only | 0.800390 | 0.799004 |
+| `tfidf_logistic_regression` | classical supervised | 0.856957 | 0.855547 |
+| `tfidf_linear_svm` | classical supervised | 0.894018 | 0.894057 |
+
+These results show that simple train-set-based TF-IDF methods are strong on Banking77. However, they should not be described as zero-shot GLiNER2 improvements because they use Banking77 train labels.
+
 ## Limitations
 
 - The performance gain is small.

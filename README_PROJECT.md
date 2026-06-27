@@ -12,6 +12,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `notebooks/02_gliner2_schema_wording_experiment_colab.ipynb`: Main Colab experiment for deterministic schema wording variants and paraphrase ensembles.
 - `notebooks/03_gliner2_retrieval_candidate_pruning_colab.ipynb`: Optional retrieval-aided candidate pruning extension.
 - `notebooks/05_gliner2_classical_baselines_comparison_colab.ipynb`: Classical and retrieval baseline comparison notebook.
+- `notebooks/06_gliner2_zero_shot_contrastive_schema_colab.ipynb`: Zero-shot contrastive schema and hierarchical GLiNER follow-up notebook.
 - `requirements-colab.txt`: Minimal Colab dependencies.
 - `src/gliner2_project/`: Small helper modules for environment reporting, label mapping, GLiNER2 wrappers, and metrics.
 - `tests/`: CPU-only unit tests that do not download GLiNER2 or Banking77.
@@ -19,6 +20,7 @@ The research direction is robust schema wording for zero-shot intent classificat
 - `docs/RESULTS_SMALL.md`: Recorded Phase 2 small-run result summary.
 - `docs/RESULTS_FULL.md`: Recorded Phase 2 full-test result summary.
 - `docs/RESULTS_CLASSICAL_BASELINES.md`: Template and guidance for the classical baseline comparison phase.
+- `docs/RESULTS_ZERO_SHOT_SCHEMA.md`: Template and guidance for the zero-shot contrastive schema phase.
 - `docs/FINAL_REPORT_DRAFT.md`: Draft text for the final course report.
 - `docs/PRESENTATION_OUTLINE.md`: Five-slide, three-minute presentation outline.
 - `AI_USAGE.md`: Disclosure template for AI-assisted scaffolding.
@@ -113,6 +115,42 @@ Outputs are saved under `OUTPUT_DIR / "classical_baselines_comparison"`:
 - `classical_run_manifest.json`
 
 Do not describe the TF-IDF kNN or supervised TF-IDF results as zero-shot improvements. They are comparison baselines showing how strong simple train-set-based methods are on Banking77.
+
+## Zero-shot Contrastive Schema Follow-up
+
+The zero-shot schema follow-up notebook is `notebooks/06_gliner2_zero_shot_contrastive_schema_colab.ipynb`.
+
+It tests schema-only methods:
+
+- `description_all_labels`
+- `cluster_second_pass_from_plain`
+- `cluster_second_pass_from_mean_confidence`
+- `hierarchical_gliner`
+- oracle analysis across zero-shot schema variants
+
+This notebook intentionally does not load the Banking77 train split. It uses the Banking77 test split for evaluation and manually/rule-designed label schema descriptions for prediction. It uses no train examples, no train labels, no external LLM, no fine-tuning, no LoRA, no paid API, and no GLiNER2 cloud API.
+
+Suggested run order:
+
+- `MODE = "smoke"` for a quick pipeline check
+- `MODE = "small"` for a stratified pilot
+- `MODE = "full"` only after setting `CONFIRM_FULL_RUN = True`
+
+Outputs are saved under `OUTPUT_DIR / "zero_shot_contrastive_schema"`:
+
+- `predictions/{method_name}.jsonl`
+- `tables/results_summary.csv`
+- `tables/second_pass_summary.csv`
+- `tables/per_cluster_accuracy.csv`
+- `tables/per_label_metrics.csv`
+- `tables/per_label_delta_vs_plain.csv`
+- `tables/confusion_pairs.csv`
+- `tables/oracle_zero_shot_schema_variants.csv`
+- `tables/zero_shot_schema_disagreement.csv`
+- `figures/*.png`
+- `zero_shot_schema_run_manifest.json`
+
+If schema wording is revised after inspecting full-test output, report the result as exploratory rather than confirmatory.
 
 The main schema wording notebook writes these files under `OUTPUT_DIR`:
 

@@ -21,6 +21,8 @@ An additional optional retrieval-aided candidate pruning phase was scaffolded. T
 
 An additional classical baseline comparison phase was scaffolded. This phase compares cached GLiNER2 zero-shot outputs with TF-IDF kNN retrieval baselines and supervised TF-IDF Logistic Regression / Linear SVM baselines. The train-set-based methods are included as comparison baselines, not as zero-shot improvements to GLiNER2. The human user must run the notebook and verify any reported metrics.
 
+An additional zero-shot contrastive schema phase was scaffolded. This phase uses manually/rule-designed label descriptions, predefined confusion clusters, cluster second passes, and hierarchical coarse-to-fine GLiNER inference. It does not use Banking77 train examples or train labels, does not fine-tune GLiNER2, does not use LoRA, does not call paid APIs, and does not use an external LLM to generate labels or predictions.
+
 ## Human Verification Steps
 
 - Colab smoke-test execution by human user
@@ -32,6 +34,9 @@ An additional classical baseline comparison phase was scaffolded. This phase com
 - Classical baseline comparison Colab execution by human user, if used
 - Verification that classical baseline results are not reported until actually run
 - Confirmation that no external paid API or external LLM was used for the baseline comparison
+- Zero-shot contrastive schema Colab execution by human user, if used
+- Verification that zero-shot schema results are not reported until actually run
+- Confirmation that any full-test schema iteration is reported as exploratory if schema wording was revised after seeing full-test output
 
 ## Human-Completed Fields
 

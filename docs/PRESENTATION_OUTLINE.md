@@ -113,6 +113,13 @@ Key framing:
 - These are not zero-shot GLiNER2 improvements.
 - They are useful reference points for how strong simple train-set-based methods are on Banking77.
 
+Full-run backup numbers:
+
+| Method | Setting | Accuracy | Macro F1 |
+|---|---|---:|---:|
+| `tfidf_weighted_knn` | retrieval-only | 0.800390 | 0.799004 |
+| `tfidf_linear_svm` | classical supervised | 0.894018 | 0.894057 |
+
 Speaker note:
 
 The main five-slide story should stay focused on schema wording sensitivity. The classical baseline comparison is a separate setting and should not be mixed into the main zero-shot claim.
